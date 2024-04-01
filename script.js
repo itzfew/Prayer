@@ -23,28 +23,26 @@ navigator.geolocation.getCurrentPosition(function(position) {
     }
 
     // Function to update prayer times
-function updatePrayerTimes() {
-    var date = new Date();
-    var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
+    function updatePrayerTimes() {
+        var date = new Date();
+        var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
 
-    // Display prayer times in HTML
-    var prayerTimesHTML = '';
-    for (var prayer in prayerTimes) {
-        if (prayerTimes.hasOwnProperty(prayer)) {
-            prayerTimesHTML += `
-                <div class="row">
-                    <div class="column">
-                        <p class="prayer-name">${prayer}</p>
-                        <p class="prayer-time">${prayerTimes[prayer]}</p>
+        // Display prayer times in HTML
+        var prayerTimesHTML = '';
+        for (var prayer in prayerTimes) {
+            if (prayerTimes.hasOwnProperty(prayer)) {
+                prayerTimesHTML += `
+                    <div class="row">
+                        <div class="column">
+                            <p class="prayer-name">${prayer}</p>
+                            <p class="prayer-time">${prayerTimes[prayer]}</p>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
         }
+        prayerTimesDiv.innerHTML = prayerTimesHTML;
     }
-    prayerTimesDiv.innerHTML = prayerTimesHTML;
-}
-       
-    
 
     // Function to fetch present address using reverse geocoding
     function fetchAddress(coordinates) {
