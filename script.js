@@ -1,40 +1,62 @@
 // Fetch prayer times using the PrayTimes.js library
 navigator.geolocation.getCurrentPosition(function(position) {
     var coordinates = [position.coords.latitude, position.coords.longitude];
-    var date = new Date();
-    var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
-
-    // Get the location name using reverse geocoding (optional)
-    fetchLocationName(coordinates[0], coordinates[1]);
-
-    // Display prayer times in HTML
-    var locationDiv = document.getElementById('location');
-    locationDiv.innerHTML = 'Location: Loading...';
-
     var prayerTimesDiv = document.getElementById('prayerTimes');
-    prayerTimesDiv.innerHTML = `
-        <p>Imsak: ${prayerTimes.imsak}</p>
-        <p>Fajr: ${prayerTimes.fajr}</p>
-        <p>Sunrise: ${prayerTimes.sunrise}</p>
-        <p>Dhuhr: ${prayerTimes.dhuhr}</p>
-        <p>Asr: ${prayerTimes.asr}</p>
-        <p>Sunset: ${prayerTimes.sunset}</p>
-        <p>Maghrib: ${prayerTimes.maghrib}</p>
-        <p>Isha: ${prayerTimes.isha}</p>
-        <p>Midnight: ${prayerTimes.midnight}</p>
-    `;
-}, function(error) {
-    console.error('Error getting user location:', error);
+    var locationDiv = document.getElementById('location');
+
+    // Update date and address periodically
+    updateDate();
+    fetchAddress(coordinates);
+
+    // Get and display prayer times
+    updatePrayerTimes();
+
+    // Function to update date periodically
+    function updateDate() {
+        setInterval(function() {
+            var currentDate = new Date();
+            var hijriDate = getHijriDate(currentDate);
+            var gregorianDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.querySelector('.hijri').innerText = 'Hijri Date: ' + hijriDate;
+            document.querySelector('.gregorian').innerText = 'Gregorian Date: ' + gregorianDate;
+        }, 60000); // Update every minute
+    }
+
+    // Function to update prayer times
+    function updatePrayerTimes() {
+        var date = new Date();
+        var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
+
+        // Display prayer times in HTML
+        prayerTimesDiv.innerHTML = `
+            <div class="row">
+                <div class="column">
+                    <p class="prayer-name">Imsak</p>
+                    <p class="prayer-time">${prayerTimes.imsak}</p>
+                </div>
+                <!-- Add similar column divs for other prayer timings -->
+            </div>
+        `;
+    }
+
+    // Function to fetch present address using reverse geocoding
+    function fetchAddress(coordinates) {
+        var url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coordinates[0]}&longitude=${coordinates[1]}&localityLanguage=en`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                locationDiv.innerHTML = `Location: ${data.city}, ${data.localityInfo.administrative[1].name}, ${data.countryName}`;
+            })
+            .catch(error => console.error('Error fetching location:', error));
+    }
 });
 
-// Function to fetch location name using reverse geocoding
-function fetchLocationName(latitude, longitude) {
-    var url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            var locationDiv = document.getElementById('location');
-            locationDiv.innerHTML = `Location: ${data.city}, ${data.countryName}`;
-        })
-        .catch(error => console.error('Error fetching location:', error));
+// Function to get Hijri date
+function getHijriDate(date) {
+    var hijriDate = new Intl.DateTimeFormat('ar-u-ca-islamic', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(date);
+    return hijriDate;
 }
