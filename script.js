@@ -1,72 +1,40 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Function to get user's current location
-    function getUserLocation() {
-        return new Promise((resolve, reject) => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        resolve(position.coords);
-                    },
-                    error => {
-                        reject(error);
-                    }
-                );
-            } else {
-                reject("Geolocation is not supported by this browser.");
-            }
-        });
-    }
+// Fetch prayer times using the PrayTimes.js library
+navigator.geolocation.getCurrentPosition(function(position) {
+    var coordinates = [position.coords.latitude, position.coords.longitude];
+    var date = new Date();
+    var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
 
-    // Function to fetch address from coordinates using OpenStreetMap Nominatim API
-    function getAddressFromCoordinates(latitude, longitude) {
-        const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
-        return fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.address) {
-                    const { road, city, country } = data.address;
-                    return `${road}, ${city}, ${country}`;
-                } else {
-                    throw new Error('Invalid response format');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching address:', error);
-                throw error;
-            });
-    }
+    // Get the location name using reverse geocoding (optional)
+    fetchLocationName(coordinates[0], coordinates[1]);
 
-    // Function to display prayer times, address, and location
-    function displayPrayerTimesAndLocation(prayerTimes, address) {
-        const locationElement = document.getElementById('location');
-        locationElement.textContent = `Your present address: ${address}`;
+    // Display prayer times in HTML
+    var locationDiv = document.getElementById('location');
+    locationDiv.innerHTML = 'Location: Loading...';
 
-        const prayerList = document.getElementById('prayer-list');
-        prayerList.innerHTML = ''; // Clear previous list items
-
-        for (const [prayer, time] of Object.entries(prayerTimes)) {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `<strong>${prayer}:</strong> ${time}`;
-            prayerList.appendChild(listItem);
-        }
-    }
-
-    // Get user's location and fetch prayer times
-    getUserLocation()
-        .then(coords => {
-            const latitude = coords.latitude;
-            const longitude = coords.longitude;
-            return getAddressFromCoordinates(latitude, longitude)
-                .then(address => {
-                    const date = new Date(); // Current date
-                    const prayerTimes = prayTimes.getTimes(date, [latitude, longitude]);
-                    displayPrayerTimesAndLocation(prayerTimes, address);
-                });
-        })
-        .catch(error => console.error('Error getting prayer times:', error));
+    var prayerTimesDiv = document.getElementById('prayerTimes');
+    prayerTimesDiv.innerHTML = `
+        <p>Imsak: ${prayerTimes.imsak}</p>
+        <p>Fajr: ${prayerTimes.fajr}</p>
+        <p>Sunrise: ${prayerTimes.sunrise}</p>
+        <p>Dhuhr: ${prayerTimes.dhuhr}</p>
+        <p>Asr: ${prayerTimes.asr}</p>
+        <p>Sunset: ${prayerTimes.sunset}</p>
+        <p>Maghrib: ${prayerTimes.maghrib}</p>
+        <p>Isha: ${prayerTimes.isha}</p>
+        <p>Midnight: ${prayerTimes.midnight}</p>
+    `;
+}, function(error) {
+    console.error('Error getting user location:', error);
 });
+
+// Function to fetch location name using reverse geocoding
+function fetchLocationName(latitude, longitude) {
+    var url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            var locationDiv = document.getElementById('location');
+            locationDiv.innerHTML = `Location: ${data.city}, ${data.countryName}`;
+        })
+        .catch(error => console.error('Error fetching location:', error));
+}
