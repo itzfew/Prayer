@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quran Verse</title>
+  <title>Random Quran Verse</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -27,60 +27,29 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
-
-    #new-verse-btn {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #new-verse-btn:hover {
-      background-color: #0056b3;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Quran Verse</h1>
+    <h1>Random Quran Verse</h1>
     <div class="verse">
       <p id="verse-text"></p>
     </div>
-    <form id="verse-form">
-      <label for="reference">Reference:</label>
-      <input type="text" id="reference" name="reference" placeholder="Enter ayah number or surah:ayah">
-      <label for="edition">Edition:</label>
-      <input type="text" id="edition" name="edition" placeholder="Enter edition identifier">
-      <button type="submit" id="new-verse-btn">Get Verse</button>
-    </form>
   </div>
   
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const verseText = document.getElementById('verse-text');
-      const verseForm = document.getElementById('verse-form');
 
-      verseForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        const reference = document.getElementById('reference').value.trim();
-        const edition = document.getElementById('edition').value.trim();
-        getQuranVerse(reference, edition);
-      });
+      getRandomVerse();
 
-      function getQuranVerse(reference, edition) {
-        fetch(`http://api.alquran.cloud/v1/ayah/${reference}/${edition}`)
+      function getRandomVerse() {
+        fetch('http://api.alquran.cloud/v1/ayah/random')
           .then(response => response.json())
           .then(data => {
-            if (data.code === 200) {
-              const verse = data.data;
-              const verseContent = `${verse.text} (${verse.surah.name}:${verse.numberInSurah})`;
-              verseText.textContent = verseContent;
-            } else {
-              verseText.textContent = 'Verse not found. Please check your reference and edition.';
-            }
+            const verse = data.data;
+            const verseContent = `${verse.text} (${verse.surah.name}:${verse.numberInSurah})`;
+            verseText.textContent = verseContent;
           })
           .catch(error => {
             console.error('Error fetching Quran verse:', error);
