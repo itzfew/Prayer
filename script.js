@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(data => {
                 if (data && data.data && data.data.timings) {
-                    return data.data.timings;
+                    return data.data;
                 } else {
                     throw new Error('Invalid response format');
                 }
@@ -40,8 +40,11 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     }
 
-    // Function to display prayer times
-    function displayPrayerTimes(prayerTimes) {
+    // Function to display prayer times and location
+    function displayPrayerTimesAndLocation(prayerTimes, location) {
+        const locationElement = document.getElementById('location');
+        locationElement.textContent = `Your location: ${location}`;
+
         const prayerList = document.getElementById('prayer-list');
         prayerList.innerHTML = ''; // Clear previous list items
 
@@ -54,7 +57,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Get user's location and fetch prayer times
     getUserLocation()
-        .then(coords => fetchPrayerTimes(coords.latitude, coords.longitude))
-        .then(prayerTimes => displayPrayerTimes(prayerTimes))
+        .then(coords => {
+            const latitude = coords.latitude;
+            const longitude = coords.longitude;
+            const location = `Latitude: ${latitude}, Longitude: ${longitude}`;
+            return fetchPrayerTimes(latitude, longitude)
+                .then(prayerTimes => displayPrayerTimesAndLocation(prayerTimes.timings, location));
+        })
         .catch(error => console.error('Error getting prayer times:', error));
 });
