@@ -21,8 +21,19 @@ document.addEventListener("DOMContentLoaded", function() {
     function fetchPrayerTimes(latitude, longitude) {
         const url = `http://api.aladhan.com/v1/timingsByCoordinates/${Date.now()}?latitude=${latitude}&longitude=${longitude}&method=2`;
         return fetch(url)
-            .then(response => response.json())
-            .then(data => data.data.timings)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.data && data.data.timings) {
+                    return data.data.timings;
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            })
             .catch(error => {
                 console.error('Error fetching prayer times:', error);
                 throw error;
@@ -45,5 +56,5 @@ document.addEventListener("DOMContentLoaded", function() {
     getUserLocation()
         .then(coords => fetchPrayerTimes(coords.latitude, coords.longitude))
         .then(prayerTimes => displayPrayerTimes(prayerTimes))
-        .catch(error => console.error('Error getting user location:', error));
+        .catch(error => console.error('Error getting prayer times:', error));
 });
