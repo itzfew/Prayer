@@ -17,29 +17,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Function to fetch prayer times using user's location
-    function fetchPrayerTimes(latitude, longitude) {
-        const url = `http://api.aladhan.com/v1/timingsByCoordinates/${Date.now()}?latitude=${latitude}&longitude=${longitude}&method=2`;
-        return fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.data && data.data.timings) {
-                    return data.data;
-                } else {
-                    throw new Error('Invalid response format');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching prayer times:', error);
-                throw error;
-            });
-    }
-
     // Function to display prayer times and location
     function displayPrayerTimesAndLocation(prayerTimes, location) {
         const locationElement = document.getElementById('location');
@@ -61,8 +38,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const latitude = coords.latitude;
             const longitude = coords.longitude;
             const location = `Latitude: ${latitude}, Longitude: ${longitude}`;
-            return fetchPrayerTimes(latitude, longitude)
-                .then(prayerTimes => displayPrayerTimesAndLocation(prayerTimes.timings, location));
+            const date = new Date(); // Current date
+            const prayerTimes = prayTimes.getTimes(date, [latitude, longitude]);
+            displayPrayerTimesAndLocation(prayerTimes, location);
         })
         .catch(error => console.error('Error getting prayer times:', error));
 });
