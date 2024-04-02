@@ -25,8 +25,13 @@ h1 {
 }
 
 .prayer-times {
-    font-size: 20px;
-    color: #444;
+    font-size: 18px;
+    color: #333;
+    margin-top: 20px;
+}
+
+.prayer-times p {
+    margin: 5px 0;
 }
 
 /* Additional styling if needed */
