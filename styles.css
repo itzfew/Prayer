@@ -1,37 +1,24 @@
-  /* Style for the container div */
+body {
+    font-family: Arial, sans-serif;
+}
+
 .prayer-times {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-/* Style for the title */
-.prayer-times h2 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 18px;
+h2 {
+    color: #333;
 }
 
-/* Style for the list of prayer times */
-.prayer-time-list {
-  list-style-type: none;
-  padding: 0;
+ul {
+    list-style-type: none;
+    padding: 0;
 }
 
-/* Style for each individual prayer time item */
-.prayer-time-item {
-  margin-bottom: 5px;
-}
-
-/* Style for the label of each prayer time (e.g., Fajr, Dhuhr) */
-.prayer-time-label {
-  font-weight: bold;
-}
-
-/* Style for the value of each prayer time (the actual time) */
-.prayer-time-value {
-  margin-left: 10px;
+li {
+    margin-bottom: 10px;
 }
