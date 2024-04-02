@@ -17,10 +17,34 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Function to display prayer times and location
-    function displayPrayerTimesAndLocation(prayerTimes, location) {
+    // Function to fetch address from coordinates using OpenStreetMap Nominatim API
+    function getAddressFromCoordinates(latitude, longitude) {
+        const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+        return fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.address) {
+                    const { road, city, country } = data.address;
+                    return `${road}, ${city}, ${country}`;
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching address:', error);
+                throw error;
+            });
+    }
+
+    // Function to display prayer times, address, and location
+    function displayPrayerTimesAndLocation(prayerTimes, address) {
         const locationElement = document.getElementById('location');
-        locationElement.textContent = `Your location: ${location}`;
+        locationElement.textContent = `Your present address: ${address}`;
 
         const prayerList = document.getElementById('prayer-list');
         prayerList.innerHTML = ''; // Clear previous list items
@@ -37,10 +61,12 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(coords => {
             const latitude = coords.latitude;
             const longitude = coords.longitude;
-            const location = `Latitude: ${latitude}, Longitude: ${longitude}`;
-            const date = new Date(); // Current date
-            const prayerTimes = prayTimes.getTimes(date, [latitude, longitude]);
-            displayPrayerTimesAndLocation(prayerTimes, location);
+            return getAddressFromCoordinates(latitude, longitude)
+                .then(address => {
+                    const date = new Date(); // Current date
+                    const prayerTimes = prayTimes.getTimes(date, [latitude, longitude]);
+                    displayPrayerTimesAndLocation(prayerTimes, address);
+                });
         })
         .catch(error => console.error('Error getting prayer times:', error));
 });
