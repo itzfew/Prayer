@@ -42,6 +42,16 @@ h1 {
 #prayerTimes p {
     margin-bottom: 10px;
 }
+	      #prayerTime {
+    font-size: 23px;
+    color: #fff;
+    text-align: center;
+}
+       #prayerTime p {
+
+    margin-bottom: 10px;
+
+}
    .container {
 
     background-color: #0F4C81;
@@ -677,6 +687,64 @@ var prayTimes = new PrayTimes();
 
 
     </script>
+	<script>
+		// Fetch current prayer time using the PrayTimes.js library
+function fetchCurrentPrayerTime() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var coordinates = [position.coords.latitude, position.coords.longitude];
+        var date = new Date();
+        var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
+        
+        // Get the current prayer time
+        var currentPrayer = getCurrentPrayer(prayerTimes);
+        
+        // Display the current prayer time in HTML
+        displayCurrentPrayerTime(currentPrayer);
+    }, function(error) {
+        console.error('Error getting user location:', error);
+        // Handle error if user location is not available
+    });
+}
+
+// Function to display current prayer time in HTML
+function displayCurrentPrayerTime(currentPrayer) {
+    var prayerTimesDiv = document.getElementById('prayerTime');
+    prayerTimesDiv.innerHTML = `
+        <p><span class="prayer-name">${currentPrayer.name}:</span> <span class="prayer-time">${currentPrayer.time}</span></p>
+    `;
+}
+
+// Function to get the current prayer time
+function getCurrentPrayer(prayerTimes) {
+    var now = new Date();
+    var currentTime = now.getHours() * 60 + now.getMinutes();
+    var prayers = Object.keys(prayerTimes).map(function(prayer) {
+        return { name: prayer, time: prayerTimes[prayer] };
+    });
+
+    var currentPrayer = null;
+    for (var i = 0; i < prayers.length; i++) {
+        var prayerTime = prayers[i].time.split(':');
+        var prayerHour = parseInt(prayerTime[0]);
+        var prayerMinute = parseInt(prayerTime[1]);
+        var prayerTimeInMinutes = prayerHour * 60 + prayerMinute;
+        if (prayerTimeInMinutes > currentTime) {
+            currentPrayer = prayers[i];
+            break;
+        }
+    }
+    if (!currentPrayer) {
+        // If all prayers have passed, display the last prayer of the day
+        currentPrayer = prayers[prayers.length - 1];
+    }
+    return currentPrayer;
+}
+
+// Call the function to fetch current prayer time when the page loads
+fetchCurrentPrayerTime();
+	</script>
+
+
     <script>
         // Fetch prayer times using the PrayTimes.js library
 function fetchPrayerTimes() {
@@ -736,6 +804,11 @@ fetchPrayerTimes();
 	
 </head>
 <body>
+	<div class="container">
+        
+        <div id="prayerTime">
+	</div>
+	
     <div class="container">     
 	
         <div id="location"></div>
