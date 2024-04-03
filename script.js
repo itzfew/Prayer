@@ -1,26 +1,34 @@
 // Fetch prayer times using the PrayTimes.js library
 function fetchPrayerTimes() {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        var coordinates = [position.coords.latitude, position.coords.longitude];
-        var date = new Date();
-        var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var coordinates = [position.coords.latitude, position.coords.longitude];
+            var date = new Date();
+            var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
 
-        // Get the location name using reverse geocoding (optional)
-        fetchLocationName(coordinates[0], coordinates[1]);
-        
-        // Display prayer times in HTML
-        displayPrayerTimes(prayerTimes);
-    }, function(error) {
-        console.error('Error getting user location:', error);
-        
-        // If geolocation fails, default to Shopian, Jammu and Kashmir, India
-        var defaultCoordinates = [33.7151, 74.8464]; // Shopian, Jammu and Kashmir, India
-        var date = new Date();
-        var prayerTimes = prayTimes.getTimes(date, defaultCoordinates, 'auto', 'auto', '24h');
-        
-        // Display prayer times in HTML
-        displayPrayerTimes(prayerTimes);
-    });
+            // Get the location name using reverse geocoding (optional)
+            fetchLocationName(coordinates[0], coordinates[1]);
+
+            // Display prayer times in HTML
+            displayPrayerTimes(prayerTimes);
+        }, function(error) {
+            console.error('Error getting user location:', error);
+            fetchDefaultPrayerTimes();
+        });
+    } else {
+        console.error('Geolocation is not supported by this browser.');
+        fetchDefaultPrayerTimes();
+    }
+}
+
+// Fetch prayer times for default location (Shopian, Jammu and Kashmir, India)
+function fetchDefaultPrayerTimes() {
+    var defaultCoordinates = [33.7151, 74.8464]; // Shopian, Jammu and Kashmir, India
+    var date = new Date();
+    var prayerTimes = prayTimes.getTimes(date, defaultCoordinates, 'auto', 'auto', '24h');
+
+    // Display prayer times in HTML
+    displayPrayerTimes(prayerTimes);
 }
 
 // Function to display prayer times in HTML
