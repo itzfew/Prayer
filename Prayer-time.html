@@ -733,6 +733,7 @@ function fetchLocationName(latitude, longitude) {
 // Call the function to fetch prayer times when the page loads
 fetchPrayerTimes();
 			  </script>
+	
 </head>
 <body>
     <div class="container">     
@@ -740,5 +741,43 @@ fetchPrayerTimes();
         <div id="location"></div>
         <div id="prayerTimes"></div>
     </div>
+
+
+	 <script>
+        // service-worker.js code goes here
+        const CACHE_NAME = 'prayer-timings-cache-v1';
+        const urlsToCache = [
+            '/',
+            '/index.html',
+            '/styles.css',
+            '/main.js',
+            '/PrayTimes.js',
+            // Add any other resources you want to cache here
+        ];
+
+        self.addEventListener('install', function(event) {
+            // Perform install steps
+            event.waitUntil(
+                caches.open(CACHE_NAME)
+                .then(function(cache) {
+                    console.log('Opened cache');
+                    return cache.addAll(urlsToCache);
+                })
+            );
+        });
+
+        self.addEventListener('fetch', function(event) {
+            event.respondWith(
+                caches.match(event.request)
+                .then(function(response) {
+                    // Cache hit - return response
+                    if (response) {
+                        return response;
+                    }
+                    return fetch(event.request);
+                })
+            );
+        });
+    </script>
 </body>
 </html>
