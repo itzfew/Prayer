@@ -39,3 +39,53 @@ h1 {
 .container * {
     backface-visibility: hidden;
 }
+.container {
+
+    background-color: white; /* Background color for the container */
+
+    border: 3px solid #ccc; /* Border for the container */
+
+    border-radius: 8px; /* Rounded corners for the container */
+
+    padding: 15px; /* Padding inside the container */
+
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for the container */
+
+}
+
+.prayer-name,
+
+.prayer-time
+
+{
+
+     background-color: black; /* Background color for prayer time */
+
+    padding: 15px;
+
+    box-sizing: border-box;
+
+    border-radius: 10px; /* Rounded corners for prayer name */
+
+   border: 2px solid #ccc; /* Border for prayer time *
+
+    margin-right: 10px; /* Margin between prayer name and prayer time */
+
+   }
+
+.prayer-name {
+
+    display: inline-block;
+
+    width: calc(50% - 50px); /* Adjust this value based on the width of prayer-name */
+
+}
+
+.prayer-time {
+
+    display: inline-block;
+    width: calc(70% - 50px); /* Adjust this value based on the width of prayer-name */
+  
+    text-align: left; /* Align text to the left within prayer time */
+}
+
