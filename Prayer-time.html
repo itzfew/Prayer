@@ -91,7 +91,11 @@ h1 {
     text-align: left; /* Align text to the left within prayer time */
 }
 
+ #dates {
 
+    font-weight: bold;
+color: white; /* Set text color to white */
+  }
 
     </style>
     <script>
@@ -731,11 +735,40 @@ function fetchLocationName(latitude, longitude) {
 
 // Call the function to fetch prayer times when the page loads
 fetchPrayerTimes();
+function updateDates() {
+  var today = new Date();
+  
+  // Hijri date calculation
+  var hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(today);
+  
+  // Gregorian date formatting
+  var gregorianDate = today.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
+  // Update the HTML elements with the calculated dates
+  document.getElementById('hijri').textContent = 'Hijri Date: ' + hijriDate;
+  document.getElementById('gregorian').textContent = 'Gregorian Date: ' + gregorianDate;
+}
+
+// Call updateDates function when the page loads
+updateDates();
+	    
     </script>
 </head>
 <body>
     <div class="container">
-        <h1>Prayer Timings</h1>
+        <div id="dates">
+    <div id="hijri"></div>
+    <div id="gregorian"></div><br>
+    </div>
+      
         <div id="location"></div>
         <div id="prayerTimes"></div>
     </div>
