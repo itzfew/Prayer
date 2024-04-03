@@ -1,13 +1,30 @@
 // Fetch prayer times using the PrayTimes.js library
-navigator.geolocation.getCurrentPosition(function(position) {
-    var coordinates = [position.coords.latitude, position.coords.longitude];
-    var date = new Date();
-    var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
+function fetchPrayerTimes() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var coordinates = [position.coords.latitude, position.coords.longitude];
+        var date = new Date();
+        var prayerTimes = prayTimes.getTimes(date, coordinates, 'auto', 'auto', '24h');
 
-    // Get the location name using reverse geocoding (optional)
-    fetchLocationName(coordinates[0], coordinates[1]);
+        // Get the location name using reverse geocoding (optional)
+        fetchLocationName(coordinates[0], coordinates[1]);
+        
+        // Display prayer times in HTML
+        displayPrayerTimes(prayerTimes);
+    }, function(error) {
+        console.error('Error getting user location:', error);
+        
+        // If geolocation fails, default to Shopian, Jammu and Kashmir, India
+        var defaultCoordinates = [33.7151, 74.8464]; // Shopian, Jammu and Kashmir, India
+        var date = new Date();
+        var prayerTimes = prayTimes.getTimes(date, defaultCoordinates, 'auto', 'auto', '24h');
+        
+        // Display prayer times in HTML
+        displayPrayerTimes(prayerTimes);
+    });
+}
 
-    // Display prayer times in HTML
+// Function to display prayer times in HTML
+function displayPrayerTimes(prayerTimes) {
     var locationDiv = document.getElementById('location');
     locationDiv.innerHTML = 'Location: Loading...';
 
@@ -23,18 +40,7 @@ navigator.geolocation.getCurrentPosition(function(position) {
         <p>Isha: ${prayerTimes.isha}</p>
         <p>Midnight: ${prayerTimes.midnight}</p>
     `;
-}, function(error) {
-    console.error('Error getting user location:', error);
-});
-
-// Function to fetch location name using reverse geocoding
-function fetchLocationName(latitude, longitude) {
-    var url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            var locationDiv = document.getElementById('location');
-            locationDiv.innerHTML = `Location: ${data.city}, ${data.countryName}`;
-        })
-        .catch(error => console.error('Error fetching location:', error));
 }
+
+// Call fetchPrayerTimes function to initiate fetching of prayer times
+fetchPrayerTimes();
