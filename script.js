@@ -34,7 +34,7 @@ function fetchDefaultPrayerTimes() {
 // Function to display prayer times in HTML
 function displayPrayerTimes(prayerTimes) {
     var locationDiv = document.getElementById('location');
-    locationDiv.innerHTML = 'Location: Loading...';
+    locationDiv.innerHTML = 'Location: Shopian, Jammu and Kashmir, India';
 
     var prayerTimesDiv = document.getElementById('prayerTimes');
     prayerTimesDiv.innerHTML = `
