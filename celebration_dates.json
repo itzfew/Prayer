@@ -5,6 +5,19 @@
     "date": "04-10",
     "hijriDate": "1 Shawwal"
   },
+{
+  "name": "Eid Adha",
+  "message": "May the blessings of Allah be with you and your family forever and always.",
+  "date": "06-16",
+  "hijriDate": "1 Dhu al-Hijjah"
+},
+  
+  {
+  "name": "Eid Milad",
+  "message": "May the blessings of Allah be with you and your family forever and always.",
+  "date": "09-16",
+  "hijriDate": "12 Rabi' al-awwal"
+},
   {
     "name": "Ramadan",
     "massage": "As the holy month of Ramadan begins, I pray that Allah blesses you with strength, patience, and wisdom. Ramadan Kareem!",
