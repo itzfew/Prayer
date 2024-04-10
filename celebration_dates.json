@@ -2,12 +2,15 @@
   {
     "name": "Eid",
     "massage": "May the blessings of Allah be with you and your family forever and always.",
-    "date": "04-20",
-    "hijriDate": "10 Shawwal"
+    "date": "04-10",
+    "hijriDate": "1 Shawwal"
   },
   {
     "name": "Ramadan",
-    "date": "04-13",
+    "massage": "As the holy month of Ramadan begins, I pray that Allah blesses you with strength, patience, and wisdom. Ramadan Kareem!",
+
+    "date": "03-01",
+    
     "hijriDate": "1 Ramadan"
   }
 ]
