@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celebration Marquee</title>
+<style>
+.marquee-container {
+  overflow: hidden;
+  height: 50px; /* Adjust height as needed */
+  background-color: white; /* Set background to white */
+  padding: 5px; /* Add some padding for better visibility */
+  position: relative; /* Position relative for absolute positioning of balloons */
+}
+
+#celebration-text {
+  color: green; /* Set text color to green */
+  font-weight: bold; /* Set text to bold */
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 20s linear infinite;
+}
+
+.balloon {
+  background-color: red;
+  border-radius: 50%;
+  width: 20px; /* Set balloon width */
+  height: 30px; /* Set balloon height */
+  position: absolute;
+  animation: open 1s ease forwards, moveUp 2s infinite, disappear 10s forwards; /* Added disappear animation */
+}
+
+@keyframes open {
+  0% { transform: scaleY(0); }
+  50% { transform: scaleY(1.2); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes moveUp {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-50px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes disappear {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.balloon:nth-child(1) {
+  left: 10%; /* Position first balloon to the left */
+}
+
+.balloon:nth-child(2) {
+  right: 10%; /* Position second balloon to the right */
+}
+
+.balloon:nth-child(3) {
+  left: 50%; /* Position third balloon in the center */
+  transform: translateX(-50%);
+}
+
+@keyframes open {
+  0% { transform: scaleY(0); }
+  50% { transform: scaleY(1.2); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes moveUp {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-50px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+</style>
+</head>
+<body>
+<div class="marquee-container">
+  <div class="marquee">
+    <span id="celebration-text"></span>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+  </div>
+</div>
+
+<!-- Other content of your website goes here -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('https://raw.githubusercontent.com/itzfew/Prayer/main/celebration_dates.json')
+        .then(response => response.json())
+        .then(data => {
+            const today = new Date();
+            const celebrationDates = data.map(item => new Date(today.getFullYear(), ...item.date.split('-').map((x, i) => i === 0 ? x - 1 : x)));
+
+            for (const celebrationDate of celebrationDates) {
+                const diffDays = Math.floor((celebrationDate - today) / (1000 * 60 * 60 * 24));
+
+                if (diffDays >= -2 && diffDays <= 2) {
+                    const celebrationText = `${data[celebrationDates.indexOf(celebrationDate)].name} celebration today!`;
+                    document.getElementById('celebration-text').textContent = celebrationText;
+                    break;
+                }
+            }
+        })
+        .catch(error => console.error('Error fetching celebration dates:', error));
+});
+</script>
+</body>
+</html>
